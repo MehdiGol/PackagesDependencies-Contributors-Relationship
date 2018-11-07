@@ -105,3 +105,39 @@ def load_repo(ecosystem):
     
     return repo
 
+def read_comments():
+    depend_comt = pandas.read_csv('../data/depend/commit_comment.csv.gz').dropna().rename(columns={'comment_author_assoc':'author_assoc','user_name':'user_login','comment_created_at':'created_at'})
+    depend_comt['type'] = 'cmt'
+    depend_isue = pandas.read_csv('../data/depend/issue_comments.csv.gz')
+    depend_isue['type'] = 'isu'
+    depend_puls = pandas.read_csv('../data/depend/pulls_comments.csv.gz')
+    depend_puls['type'] = 'pul'
+    depend_plrq = pandas.read_csv('../data/depend/pulls_review_comments.csv.gz')
+    depend_plrq['type'] = 'prq'
+
+    origin_comt = pandas.read_csv('../data/origin/commit_comment.csv.gz')
+    origin_comt = origin_comt.dropna().rename(columns={'comment_author_assoc':'author_assoc','user_name':'user_login','comment_created_at':'created_at'})
+    origin_comt['type'] = 'cmt'
+    origin_isue = pandas.read_csv('../data/origin/issue_comments.csv.gz')
+    origin_isue['type'] = 'isu'
+    origin_puls = pandas.read_csv('../data/origin/pulls_comments.csv.gz')
+    origin_puls['type'] = 'pul'
+    origin_plrq = pandas.read_csv('../data/origin/pulls_review_comments.csv.gz')
+    origin_plrq['type'] = 'prq'
+    
+    all_comments = depend_comt[['project_name','user_login','author_assoc','created_at','type']].append(
+                   depend_isue[['project_name','user_login','author_assoc','created_at','type']]).append(
+                   depend_puls[['project_name','user_login','author_assoc','created_at','type']]).append(
+                   depend_plrq[['project_name','user_login','author_assoc','created_at','type']]).append(
+                   origin_comt[['project_name','user_login','author_assoc','created_at','type']]).append(
+                   origin_isue[['project_name','user_login','author_assoc','created_at','type']]).append(
+                   origin_puls[['project_name','user_login','author_assoc','created_at','type']]).append(
+                   origin_plrq[['project_name','user_login','author_assoc','created_at','type']])
+    cargo = load_repo('Cargo')
+    cargo_git = cargo[cargo.Repository_URL.notnull()]
+    cargo_git = cargo_git[cargo_git.Repository_URL.str.contains('github')].drop_duplicates(subset='Repository_URL')
+    repos = cargo_git[['Name','Repository_URL']]
+    
+    all_comments_repos = all_comments.merge(repos.reset_index(),left_on='project_name', right_on='Repository_URL')[['Name','user_login','author_assoc','created_at','type']]
+    
+    return all_comments_repos
