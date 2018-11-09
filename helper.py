@@ -106,23 +106,31 @@ def load_repo(ecosystem):
     return repo
 
 def read_comments():
-    depend_comt = pandas.read_csv('../data/depend/commit_comment.csv.gz').dropna().rename(columns={'comment_author_assoc':'author_assoc','user_name':'user_login','comment_created_at':'created_at'})
+    depend_comt = (
+        pandas.read_csv((DATA_PATH / 'depend/commit_comment.csv.gz').as_posix())
+        .dropna()
+        .rename(columns={'comment_author_assoc':'author_assoc','user_name':'user_login','comment_created_at':'created_at'})
+    )
     depend_comt['type'] = 'cmt'
-    depend_isue = pandas.read_csv('../data/depend/issue_comments.csv.gz')
+    depend_isue = pandas.read_csv((DATA_PATH / 'depend/issue_comments.csv.gz').as_posix())
     depend_isue['type'] = 'isu'
-    depend_puls = pandas.read_csv('../data/depend/pulls_comments.csv.gz')
+    depend_puls = pandas.read_csv((DATA_PATH / 'depend/pulls_comments.csv.gz').as_posix())
     depend_puls['type'] = 'pul'
-    depend_plrq = pandas.read_csv('../data/depend/pulls_review_comments.csv.gz')
+    depend_plrq = pandas.read_csv((DATA_PATH / 'depend/pulls_review_comments.csv.gz').as_posix())
     depend_plrq['type'] = 'prq'
 
-    origin_comt = pandas.read_csv('../data/origin/commit_comment.csv.gz')
-    origin_comt = origin_comt.dropna().rename(columns={'comment_author_assoc':'author_assoc','user_name':'user_login','comment_created_at':'created_at'})
+    origin_comt = pandas.read_csv((DATA_PATH / 'origin/commit_comment.csv.gz').as_posix())
+    origin_comt = (
+        origin_comt
+        .dropna()
+        .rename(columns={'comment_author_assoc':'author_assoc','user_name':'user_login','comment_created_at':'created_at'})
+    )
     origin_comt['type'] = 'cmt'
-    origin_isue = pandas.read_csv('../data/origin/issue_comments.csv.gz')
+    origin_isue = pandas.read_csv((DATA_PATH / 'origin/issue_comments.csv.gz').as_posix())
     origin_isue['type'] = 'isu'
-    origin_puls = pandas.read_csv('../data/origin/pulls_comments.csv.gz')
+    origin_puls = pandas.read_csv((DATA_PATH / 'origin/pulls_comments.csv.gz').as_posix())
     origin_puls['type'] = 'pul'
-    origin_plrq = pandas.read_csv('../data/origin/pulls_review_comments.csv.gz')
+    origin_plrq = pandas.read_csv((DATA_PATH / 'origin/pulls_review_comments.csv.gz').as_posix())
     origin_plrq['type'] = 'prq'
     
     all_comments = depend_comt[['project_name','user_login','author_assoc','created_at','type']].append(
