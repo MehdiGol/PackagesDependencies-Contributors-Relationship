@@ -4,6 +4,8 @@ import collections
 
 CURRENT_PATH = pathlib.Path(__file__).absolute().parent
 
+DATE_RANGE = (pandas.to_datetime('2014-01-01'), pandas.to_datetime('2019-01-01'))
+
 DATA_PATH = CURRENT_PATH / 'data'
 
 GIT_API = ['5da1276e73fbfda3c268:35e6eb9e99f74000131e20e4caa644a546dd384d',
